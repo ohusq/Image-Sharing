@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Screenshot Share</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input[type="file"] {
+      margin: 20px 0;
+    }
+    #link {
+      margin-top: 20px;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Upload Your Screenshot</h1>
+  <form id="uploadForm">
+    <input type="file" id="imageFile" accept="image/*" required>
+    <br>
+    <button type="submit">Upload</button>
+  </form>
+  <p id="link"></p>
+</div>
+
+<script>
+  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById('imageFile');
+    if (!fileInput.files.length) return;
+    
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    const SITE_URL = 'http://localhost:3000';
+    formData.append('screenshot', file);
+
+    try {
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      document.getElementById('link').textContent = SITE_URL + data.url;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      document.getElementById('link').textContent = 'Upload failed.';
+    }
+  });
+</script>
+</body>
+</html>
